@@ -1,3 +1,4 @@
+// 전역 변수 추가
 import React from 'react'
 import deepFreeze from 'deep-freeze'
 
