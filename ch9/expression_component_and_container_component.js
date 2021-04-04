@@ -29,7 +29,7 @@ NewColor.contextTypes = {
   store: PropTypes.object
 }
 
-export const Menu = (props, { stores }) =>
+export const Menu = (props, { store }) =>
   <SortMenu sort={store.getState().sort}
             onSelect={sortBy =>
               store.dispatch(sortColors(sortBy))
