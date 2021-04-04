@@ -65,3 +65,80 @@ const App = () =>
   </Switch>
 
 export default App
+
+// Color component
+import { withRouter } from 'react-router'
+
+...
+
+class Color extends Component {
+  render() {
+    const {
+      id, title, color, rating, timestamp, onRemove, onRate, history
+    } = this.props
+    return (
+      <section className="color" style={this.style}>
+        <h1 ref="title" onClick={() => history.push(`/${id}`)}>{title}</h1>
+        <button onClick={onRemove}><FaTrash /></button>
+        <div className="color" onClick={() => history.push(`/${id}`)}
+          style=({ backgroundColor: color })>
+        </div>
+        <TimeAgo timestamp={timestamp} />
+        <div>
+          <StarRating starsSelected={rating} onRate={onRate} />
+        </div>
+      </section>
+    )
+  }
+}
+
+export default withRouter(Color)
+
+// 색 정렬 방법을 router로 옮기기
+
+// 정렬 방벙을 router로 옮겼을 때 Colors container
+export const Colors = connect(
+  ({colors}, {match}) =>
+    ({
+      colors: sortColor(colors, match.params.sort)
+    }),
+  dispatch =>
+    ({
+      onRemove(id) {
+        dispatch(removeColor(id))
+      },
+      onRate(id, rating) {
+        dispatch(rateColor(id, rating))
+      }
+    })
+)(ColorList)
+
+// Menu component 수정
+import { NavLink } from 'react-router'
+
+const selectedStyle = { color : 'red' }
+
+const Menu = ({ match }) =>
+  <nav className="menu">
+    <NavLink to="/" style={match.isExact && selectedStyle}>날짜</NavLink>
+    <NavLink to="/sort/title" activeStyle={selectedStyle}>이름</NavLink>
+    <NavLink to="/sort/rating" activeStyle={selectedStyle}>평점</NavLink>
+  </nav>
+
+export default Menu
+
+// App component 수정
+const App = () =>
+  <Switch>
+    <Route exact path="/:id" component={Color} />
+    <Route path="/" component={() => (
+      <div className="app">
+        <Route component={Menu} />
+        <NewColor />
+        <Switch>
+          <Route exact path="/" component={Colors} />
+          <Route path="/sort/:sort" component={Colors} />
+        </Switch>
+      </div>
+    )} />
+  </Switch>
